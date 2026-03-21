@@ -2,7 +2,22 @@ import { NextResponse } from "next/server";
 import prisma from "../../../../lib/prisma";
 
 
-export async function GET () {
+export async function GET (request) {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get("id")
+
+    if (id) {
+        const student = await prisma.students.findUnique({
+        where: {
+            id: parseInt(id)
+        }
+    })
+    return NextResponse.json({
+        status: 200,
+        message: "Student found successfully.",
+        payload: student
+    })
+    }
     const res = await prisma.students.findMany()
 
     return NextResponse.json({
